@@ -36,19 +36,20 @@ function HandleTpallCommand(Split, Player)
 	
 	local ForEachPlayer = function(_Player)
 		if not (_Player:GetName() == tpTarget) then
-			local pluginManager = cRoot:Get():GetPluginManager()
+			-- local pluginManager = cRoot:Get():GetPluginManager()
 			-- pluginManager:ExecuteConsoleCommand("tp ".._Player:GetName().." "..tpTarget)
 			cPluginManager:ExecuteConsoleCommand("tp ".._Player:GetName().." "..tpTarget)
-			Player:SendMessageSuccess("tp ".._Player:GetName().." to "..tpTarget)
+			Player:SendMessageSuccess("&7tp &2".._Player:GetName().." &7to &2"..tpTarget)
 		end
 	end
 	cRoot:Get():ForEachPlayer(ForEachPlayer)
-	LOG("tp All Player to "..Player:GetName())
+	LOG("&etp All Player to &a"..Player:GetName())
 	return true;
 end
 
 
 function HandleKillAllEntityCommand(Split, Player)
+	local count = 0
 	local ForEachEntity = function(Entity)
 		if not Entity:IsPlayer() then
 			-- dtAdmin Damage
@@ -56,9 +57,11 @@ function HandleKillAllEntityCommand(Split, Player)
 			
 			-- 消してるっぽい (ダメージとかじゃなくて消してるっぽい)
 			Entity:Destroy()
+			count = count + 1
 		end
 	end
 	Player:GetWorld():ForEachEntity(ForEachEntity)
+	Player:SendMessageSuccess("&eKill All &a"..count.." &eentities")
 	return true;
 end
 function HandleKillAllCommand(Split, Player)
@@ -69,19 +72,25 @@ function HandleKillAllCommand(Split, Player)
 		end
 	end
 	Player:GetWorld():ForEachEntity(ForEachEntity)
+	Player:SendMessageSuccess("&eKill All Player")
 	return true;
 end
 
 
 function HandleListEntityCommand(Split, Player)
-	local count = 0
-	local ForEachEntity = function(Entity)
-		if not Entity:IsPlayer() then
-			count = count + 1
+	local outText = ""
+	local ForEachWorld = function(World)
+		local count = 0
+		local ForEachEntity = function(Entity)
+			if not Entity:IsPlayer() then
+				count = count + 1
+			end
 		end
+		-- local World = Player:GetWorld()
+		World:ForEachEntity(ForEachEntity)
+		outText = outText.."&b"..World:GetName().."&e: &a"..count.."\n"
 	end
-	local World = Player:GetWorld()
-	World:ForEachEntity(ForEachEntity)
-	Player:SendMessageSuccess("&eTotal number of entities in &b"..World:GetName().."&e: &a"..count)
+	cRoot:Get():ForEachWorld(ForEachWorld)
+	Player:SendMessageSuccess("&eTotal number of entities"..outText)
 	return true;
 end
