@@ -1,0 +1,2 @@
+# CubeCMDTool
+cuberite のコマンドツール
