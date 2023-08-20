@@ -11,15 +11,17 @@ function Initialize(Plugin)
 	-- PluginManager = cRoot:Get():GetPluginManager()
 	cPluginManager:BindCommand("/tpall","CubeCMDTool.tpall",HandleTpallCommand,"tp all player")
 
-	cPluginManager:BindCommand("/killAllEntity","CubeCMDTool.killAllEntity",HandleKillAllEntityCommand,"tp all player")
-	cPluginManager:BindCommand("/killAll","CubeCMDTool.killAll",HandleKillAllCommand,"tp all player")
+	cPluginManager:BindCommand("/killAllEntity","CubeCMDTool.killAllEntity",HandleKillAllEntityCommand,"kill all entity")
+	cPluginManager:BindCommand("/killAll","CubeCMDTool.killAll",HandleKillAllCommand,"kill all player")
 
-	cPluginManager:BindCommand("/listEntity","CubeCMDTool.killEntity",HandleListEntityCommand,"tp all player")
+	cPluginManager:BindCommand("/listEntity","CubeCMDTool.killEntity",HandleListEntityCommand,"list all dimension entity")
+	
+	cPluginManager:BindCommand("/playerViewDistance","CubeCMDTool.",HandlePlayerViewDistanceCommand,"change player view distance")
+	cPluginManager:BindCommand("/allPlayerViewDistance","CubeCMDTool.",HandleAllPlayerViewDistanceCommand,"change all player view distance")
+	
 	-- cPluginManager:AddHook(cPluginManager.HOOK_CHAT, Chat)
 
-	PLUGIN = Plugin -- NOTE: only needed if you want OnDisable() to use GetName() or something like that
-
-	-- Command Bindings
+	-- PLUGIN = Plugin -- NOTE: only needed if you want OnDisable() to use GetName() or something like that
 
 	LOG("Initialised "..Plugin:GetName().." version: " .. Plugin:GetVersion())
 	return true
@@ -93,4 +95,49 @@ function HandleListEntityCommand(Split, Player)
 	cRoot:Get():ForEachWorld(ForEachWorld)
 	Player:SendMessageSuccess("&eTotal number of entities"..outText)
 	return true;
+end
+
+
+function HandlePlayerViewDistanceCommand(Split, Player)
+	if Split[2] == nil or Split[3] == nil then
+		Player:SendMessageFailure("Usage: /playerViewDistance [playerName] <1-32> ")
+		return true
+	end
+	local ViewDistance = tonumber(Split[3])
+	if not ViewDistance then
+		Player:SendMessageFailure("Invalid view distance value \"" .. Split[2] .. "\"")
+	end
+	
+	local FoundPlayerCallback = function(_Player)
+		_Player:GetClientHandle():SetViewDistance(ViewDistance)
+		Player:SendMessageSuccess("&eSet ".._Player:GetName().."'s View distance to &a"..Player:GetClientHandle():GetViewDistance())
+		return true
+	end
+
+	if not cRoot:Get():FindAndDoWithPlayer( Split[2], FoundPlayerCallback ) then
+		Player:SendMessageFailure("Could not find player")
+		return true
+	end
+
+	return true
+end
+function HandleAllPlayerViewDistanceCommand(Split, Player)
+	if Split[2] == nil then
+		Player:SendMessageFailure("Usage: /allPlayerViewDistance <1-32> ")
+		return true
+	end
+	local ViewDistance = tonumber(Split[2])
+	if not ViewDistance then
+		Player:SendMessageFailure("Invalid view distance value \"" .. Split[2] .. "\"")
+	end
+
+	local ForEachPlayer = function(_Player)
+		_Player:GetClientHandle():SetViewDistance(ViewDistance)
+		return true
+	end
+
+	cRoot:Get():ForEachPlayer(ForEachPlayer)
+
+	Player:SendMessageSuccess("&eSet all player View distance to &a"..ViewDistance)
+	return true
 end
