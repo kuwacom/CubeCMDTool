@@ -11,6 +11,9 @@ function BindCommands()
 	cPluginManager:BindCommand("/allPlayerViewDistance","CubeCMDTool.allPlayerViewDistance",HandleAllPlayerViewDistanceCommand,"change all player view distance")
 	
 	cPluginManager:BindCommand("/kickAll","CubeCMDTool.kickAll",HandleKiclAllCommand,"kick all player")
+
+	cPluginManager:BindCommand("/fill","CubeCMDTool.fill",HandleFillCommand,"fill the blocks")
+	cPluginManager:BindCommand("/setblock","CubeCMDTool.setblock",HandleSetBlockCommand,"place the block")
 end
 
 

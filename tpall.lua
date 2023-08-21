@@ -16,6 +16,6 @@ function HandleTpallCommand(Split, Player)
 		end
 	end
 	cRoot:Get():ForEachPlayer(ForEachPlayer)
-	LOG("&etp All Player to &a"..Player:GetName())
+	Player:SendMessageSuccess("&etp All Player to &a"..Player:GetName())
 	return true;
 end
